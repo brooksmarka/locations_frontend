@@ -10,15 +10,20 @@ import {
 const Map = compose(
   withProps({
     googleMapURL:
-      "https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places",
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyB-wDNI3bGVreubWNQkWvjHlL15a7Bcx48&v=3.exp&libraries=geometry,drawing,places",
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />
   }),
   withScriptjs,
   withGoogleMap
-)(props => (
-  <GoogleMap defaultZoom={8} defaultCenter={{ lat: -34.397, lng: 150.644 }}>
+)((props, context) => (
+  <GoogleMap
+    defaultZoom={8}
+    defaultCenter={{ lat: -34.397, lng: 150.644 }}
+    onCenterChanged={() => console.log(context)}
+    getBounds={props.getBounds}
+  >
     {props.isMarkerShown && (
       <Marker
         position={{ lat: -34.397, lng: 150.644 }}
@@ -48,11 +53,17 @@ class MyFancyComponent extends React.PureComponent {
     this.delayedShowMarker();
   };
 
+  handleBounds = e => {
+    console.log(e);
+  };
+
   render() {
     return (
       <Map
         isMarkerShown={this.state.isMarkerShown}
         onMarkerClick={this.handleMarkerClick}
+        onCenterChanged={() => this.handleBounds()}
+        getBounds={this.handleBounds}
       />
     );
   }

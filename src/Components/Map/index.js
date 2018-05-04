@@ -6,6 +6,7 @@ import {
   GoogleMap,
   Marker
 } from "react-google-maps";
+import axios from "axios";
 
 const Map = compose(
   withProps({
@@ -40,6 +41,7 @@ class MyFancyComponent extends React.PureComponent {
 
   componentDidMount() {
     this.delayedShowMarker();
+    this.fetchMarkers();
   }
 
   delayedShowMarker = () => {
@@ -57,6 +59,10 @@ class MyFancyComponent extends React.PureComponent {
     console.log(e);
   };
 
+  fetchMarkers = () => {
+    const request = axios.post("http://localhost:6001/get-markers");
+    console.log(request);
+  };
   render() {
     return (
       <Map

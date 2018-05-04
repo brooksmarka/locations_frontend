@@ -37,14 +37,14 @@ const Map = compose(
   withGoogleMap
 )((props, context) => (
   <GoogleMap
-    defaultZoom={8}
-    defaultCenter={{lat: -34.397, lng: 150.644}}
+    defaultZoom={5}
+    defaultCenter={{lat: 41.850033, lng: -87.6500523}}
     ref={props.onMapMounted}
     onBoundsChanged={props.onBoundsChanged}
   >
     {props.isMarkerShown && (
       <Marker
-        position={{lat: -34.397, lng: 150.644}}
+        position={{lat: 41.850033, lng: -87.6500523}}
         onClick={props.onMarkerClick}
       />
     )}

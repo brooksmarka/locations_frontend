@@ -1,3 +1,4 @@
+// Reference: https://github.com/tomchentw/react-google-maps/blob/master/src/components/GoogleMap.md
 import React from 'react';
 import {compose, withHandlers, withProps} from 'recompose';
 import {
@@ -15,27 +16,28 @@ const Map = compose(
     containerElement: <div style={{height: `400px`}} />,
     mapElement: <div style={{height: `100%`}} />,
   }),
-  withHandlers(() => {
+  withHandlers(props => {
     const refs = {
       map: undefined,
     };
 
     return {
       onMapMounted: () => ref => {
-        console.log('had ref now');
         refs.map = ref;
       },
-      onZoomChanged: ({onZoomChange}) => () => {
-        console.log('zoomChanged', refs.map.getZoom());
-      },
-      onBoundsChanged: obj => () => {
-        console.log('boundsChanged', obj);
+
+      // MTS - Leaving this here for the time being
+      // onZoomChanged: ({onZoomChange}) => () => {
+      //   console.log('zoomChanged', refs.map.getZoom());
+      // },
+      onBoundsChanged: () => () => {
+        props.handleBounds(refs.map);
       },
     };
   }),
   withScriptjs,
   withGoogleMap
-)((props, context) => (
+)(props => (
   <GoogleMap
     defaultZoom={5}
     defaultCenter={{lat: 41.850033, lng: -87.6500523}}
@@ -51,40 +53,20 @@ const Map = compose(
   </GoogleMap>
 ));
 
-class MyFancyComponent extends React.PureComponent {
-  state = {
-    isMarkerShown: false,
-  };
-
+class MapWrapper extends React.PureComponent {
   componentDidMount() {
-    this.delayedShowMarker();
+    // do some stuff here like fetch markers
   }
 
-  delayedShowMarker = () => {
-    setTimeout(() => {
-      this.setState({isMarkerShown: true});
-    }, 3000);
-  };
+  // PRIVATE
 
-  handleMarkerClick = () => {
-    this.setState({isMarkerShown: false});
-    this.delayedShowMarker();
-  };
-
-  handleBounds = e => {
-    console.log(e);
+  _handleBounds = map => {
+    console.log('handling bounds change: ', map.getBounds());
   };
 
   render() {
-    return (
-      <Map
-        isMarkerShown={this.state.isMarkerShown}
-        onMarkerClick={this.handleMarkerClick}
-        onCenterChanged={() => this.handleBounds()}
-        getBounds={this.handleBounds}
-      />
-    );
+    return <Map handleBounds={this._handleBounds} />;
   }
 }
 
-export default MyFancyComponent;
+export default MapWrapper;

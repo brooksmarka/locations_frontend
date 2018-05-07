@@ -67,8 +67,10 @@ class MapWrapper extends React.PureComponent {
   };
 
   fetchMarkers = () => {
-    const request = axios.post("http://localhost:6001/get-markers");
-    console.log(request);
+    const data = null;
+    const request = axios
+      .post("http://localhost:6001/get-markers", { test: data })
+      .then(res => console.log(res.data));
   };
   render() {
     return <Map isMarkerShown handleBounds={this._handleBounds} />;

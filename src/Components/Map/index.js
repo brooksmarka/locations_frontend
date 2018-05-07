@@ -1,72 +1,72 @@
-import React from "react";
-import { compose, withProps } from "recompose";
+// Reference: https://github.com/tomchentw/react-google-maps/blob/master/src/components/GoogleMap.md
+import React from 'react';
+import {compose, withHandlers, withProps} from 'recompose';
 import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker
-} from "react-google-maps";
+  Marker,
+} from 'react-google-maps';
 
 const Map = compose(
   withProps({
     googleMapURL:
-      "https://maps.googleapis.com/maps/api/js?key=AIzaSyB-wDNI3bGVreubWNQkWvjHlL15a7Bcx48&v=3.exp&libraries=geometry,drawing,places",
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
-    mapElement: <div style={{ height: `100%` }} />
+      'https://maps.googleapis.com/maps/api/js?key=AIzaSyB-wDNI3bGVreubWNQkWvjHlL15a7Bcx48&v=3.exp&libraries=geometry,drawing,places',
+    loadingElement: <div style={{height: `100%`}} />,
+    containerElement: <div style={{height: `400px`}} />,
+    mapElement: <div style={{height: `100%`}} />,
+  }),
+  withHandlers(props => {
+    const refs = {
+      map: undefined,
+    };
+
+    return {
+      onMapMounted: () => ref => {
+        refs.map = ref;
+      },
+
+      // MTS - Leaving this here for the time being
+      // onZoomChanged: ({onZoomChange}) => () => {
+      //   console.log('zoomChanged', refs.map.getZoom());
+      // },
+      onBoundsChanged: () => () => {
+        props.handleBounds(refs.map);
+      },
+    };
   }),
   withScriptjs,
   withGoogleMap
-)((props, context) => (
+)(props => (
   <GoogleMap
-    defaultZoom={8}
-    defaultCenter={{ lat: -34.397, lng: 150.644 }}
-    onCenterChanged={() => console.log(context)}
-    getBounds={props.getBounds}
+    defaultZoom={5}
+    defaultCenter={{lat: 41.850033, lng: -87.6500523}}
+    ref={props.onMapMounted}
+    onBoundsChanged={props.onBoundsChanged}
   >
     {props.isMarkerShown && (
       <Marker
-        position={{ lat: -34.397, lng: 150.644 }}
+        position={{lat: 41.850033, lng: -87.6500523}}
         onClick={props.onMarkerClick}
       />
     )}
   </GoogleMap>
 ));
 
-class MyFancyComponent extends React.PureComponent {
-  state = {
-    isMarkerShown: false
-  };
-
+class MapWrapper extends React.PureComponent {
   componentDidMount() {
-    this.delayedShowMarker();
+    // do some stuff here like fetch markers
   }
 
-  delayedShowMarker = () => {
-    setTimeout(() => {
-      this.setState({ isMarkerShown: true });
-    }, 3000);
-  };
+  // PRIVATE
 
-  handleMarkerClick = () => {
-    this.setState({ isMarkerShown: false });
-    this.delayedShowMarker();
-  };
-
-  handleBounds = e => {
-    console.log(e);
+  _handleBounds = map => {
+    console.log('handling bounds change: ', map.getBounds());
   };
 
   render() {
-    return (
-      <Map
-        isMarkerShown={this.state.isMarkerShown}
-        onMarkerClick={this.handleMarkerClick}
-        onCenterChanged={() => this.handleBounds()}
-        getBounds={this.handleBounds}
-      />
-    );
+    return <Map handleBounds={this._handleBounds} />;
   }
 }
 
-export default MyFancyComponent;
+export default MapWrapper;

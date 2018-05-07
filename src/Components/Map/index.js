@@ -71,7 +71,7 @@ class MapWrapper extends React.PureComponent {
     console.log(request);
   };
   render() {
-    return <Map handleBounds={this._handleBounds} />;
+    return <Map isMarkerShown handleBounds={this._handleBounds} />;
   }
 }
 

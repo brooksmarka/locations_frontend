@@ -1,24 +1,25 @@
 // Reference: https://github.com/tomchentw/react-google-maps/blob/master/src/components/GoogleMap.md
-import React from 'react';
-import {compose, withHandlers, withProps} from 'recompose';
+import React from "react";
+import { compose, withHandlers, withProps } from "recompose";
 import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker,
-} from 'react-google-maps';
+  Marker
+} from "react-google-maps";
+import axios from "axios";
 
 const Map = compose(
   withProps({
     googleMapURL:
-      'https://maps.googleapis.com/maps/api/js?key=AIzaSyB-wDNI3bGVreubWNQkWvjHlL15a7Bcx48&v=3.exp&libraries=geometry,drawing,places',
-    loadingElement: <div style={{height: `100%`}} />,
-    containerElement: <div style={{height: `400px`}} />,
-    mapElement: <div style={{height: `100%`}} />,
+      "https://maps.googleapis.com/maps/api/js?key=AIzaSyB-wDNI3bGVreubWNQkWvjHlL15a7Bcx48&v=3.exp&libraries=geometry,drawing,places",
+    loadingElement: <div style={{ height: `100%` }} />,
+    containerElement: <div style={{ height: `400px` }} />,
+    mapElement: <div style={{ height: `100%` }} />
   }),
   withHandlers(props => {
     const refs = {
-      map: undefined,
+      map: undefined
     };
 
     return {
@@ -32,7 +33,7 @@ const Map = compose(
       // },
       onBoundsChanged: () => () => {
         props.handleBounds(refs.map);
-      },
+      }
     };
   }),
   withScriptjs,
@@ -40,13 +41,13 @@ const Map = compose(
 )(props => (
   <GoogleMap
     defaultZoom={5}
-    defaultCenter={{lat: 41.850033, lng: -87.6500523}}
+    defaultCenter={{ lat: 41.850033, lng: -87.6500523 }}
     ref={props.onMapMounted}
     onBoundsChanged={props.onBoundsChanged}
   >
     {props.isMarkerShown && (
       <Marker
-        position={{lat: 41.850033, lng: -87.6500523}}
+        position={{ lat: 41.850033, lng: -87.6500523 }}
         onClick={props.onMarkerClick}
       />
     )}
@@ -55,17 +56,24 @@ const Map = compose(
 
 class MapWrapper extends React.PureComponent {
   componentDidMount() {
-    // do some stuff here like fetch markers
+    //this.delayedShowMarker();
+    this.fetchMarkers();
   }
 
   // PRIVATE
 
   _handleBounds = map => {
-    console.log('handling bounds change: ', map.getBounds());
+    console.log("handling bounds change: ", map.getBounds());
   };
 
+  fetchMarkers = () => {
+    const data = null;
+    const request = axios
+      .post("http://localhost:6001/get-markers", { test: data })
+      .then(res => console.log(res.data));
+  };
   render() {
-    return <Map handleBounds={this._handleBounds} />;
+    return <Map isMarkerShown handleBounds={this._handleBounds} />;
   }
 }
 

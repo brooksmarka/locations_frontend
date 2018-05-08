@@ -45,12 +45,17 @@ const Map = compose(
     ref={props.onMapMounted}
     onBoundsChanged={props.onBoundsChanged}
   >
-    {props.isMarkerShown && (
-      <Marker
-        position={{ lat: 41.850033, lng: -87.6500523 }}
-        onClick={props.onMarkerClick}
-      />
-    )}
+    {props.isMarkerShown &&
+      props.markers.map(obj => (
+        <Marker
+          key={obj._id}
+          position={{
+            lat: obj.geo.coordinates[1],
+            lng: obj.geo.coordinates[0]
+          }}
+          onClick={props.onMarkerClick}
+        />
+      ))}
   </GoogleMap>
 ));
 
@@ -77,7 +82,13 @@ class MapWrapper extends React.PureComponent {
 
   render() {
     console.log(this.state);
-    return <Map isMarkerShown handleBounds={this._handleBounds} />;
+    return (
+      <Map
+        isMarkerShown
+        handleBounds={this._handleBounds}
+        markers={this.state.markers}
+      />
+    );
   }
 }
 

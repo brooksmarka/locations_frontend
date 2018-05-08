@@ -55,6 +55,8 @@ const Map = compose(
 ));
 
 class MapWrapper extends React.PureComponent {
+  state = { markers: [] };
+
   componentDidMount() {
     //this.delayedShowMarker();
     this.fetchMarkers();
@@ -70,9 +72,11 @@ class MapWrapper extends React.PureComponent {
     const data = null;
     const request = axios
       .post("http://localhost:6001/get-markers", { test: data })
-      .then(res => console.log(res.data));
+      .then(res => this.setState({ markers: res.data }));
   };
+
   render() {
+    console.log(this.state);
     return <Map isMarkerShown handleBounds={this._handleBounds} />;
   }
 }

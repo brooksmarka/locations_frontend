@@ -87,7 +87,8 @@ class MapWrapper extends React.PureComponent {
     const {bounds} = this.state;
     axios
       .post('http://localhost:6001/get-markers', {bounds})
-      .then(res => this.setState({markers: res.data}));
+      .then(res => this.setState({markers: res.data}))
+      .catch(err => console.log('error getting marker', err));
   };
 
   render() {

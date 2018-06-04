@@ -71,10 +71,6 @@ class MapWrapper extends React.PureComponent {
     markers: []
   };
 
-  componentDidMount() {
-    this._fetchMarkers();
-  }
-
   // PRIVATE
 
   _handleBounds = map => {

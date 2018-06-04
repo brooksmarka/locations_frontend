@@ -7,6 +7,7 @@ import {
   GoogleMap,
   Marker
 } from "react-google-maps";
+import { MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
 import axios from "axios";
 
 const Map = compose(
@@ -45,17 +46,19 @@ const Map = compose(
     ref={props.onMapMounted}
     onBoundsChanged={props.onBoundsChanged}
   >
-    {props.isMarkerShown &&
-      props.markers.map(obj => (
-        <Marker
-          key={obj._id}
-          position={{
-            lat: obj.geo.coordinates[1],
-            lng: obj.geo.coordinates[0]
-          }}
-          onClick={props.onMarkerClick}
-        />
-      ))}
+    <MarkerClusterer averageCenter enableRetinaIcons gridSize={60}>
+      {props.isMarkerShown &&
+        props.markers.map(obj => (
+          <Marker
+            key={obj._id}
+            position={{
+              lat: obj.geo.coordinates[1],
+              lng: obj.geo.coordinates[0]
+            }}
+            onClick={props.onMarkerClick}
+          />
+        ))}
+    </MarkerClusterer>
   </GoogleMap>
 ));
 
@@ -73,6 +76,7 @@ class MapWrapper extends React.PureComponent {
   _handleBounds = map => {
     let northEast = map.getBounds().getNorthEast();
     let southWest = map.getBounds().getSouthWest();
+    console.log(map.getZoom());
 
     northEast = { lat: northEast.lat(), lng: northEast.lng() };
     southWest = { lat: southWest.lat(), lng: southWest.lng() };
@@ -83,6 +87,7 @@ class MapWrapper extends React.PureComponent {
 
   _fetchMarkers = () => {
     const { bounds } = this.state;
+    console.log(bounds);
     axios
       .post("http://localhost:6001/get-markers", { bounds })
       .then(res => this.setState({ markers: res.data }))
